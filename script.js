@@ -1,9 +1,11 @@
+// Document elements
 const scoreCounter = document.querySelector('.score-counter');
 const grid = document.querySelector('.grid');
 const endGameScreen = document.querySelector('.end-game-screen');
 const endGameText = document.querySelector('.end-game-text');
 const playAgainButton = document.querySelector('.play-again');
 
+// Game variables
 let columns = 10;
 let rows = 10;
 let totalCells = columns * rows;
@@ -18,16 +20,15 @@ let flagCounter = 0;
 let zerosCounter = [];
 scoreCounter.innerText = String(totalBombs).padStart(3, 0);
 
+// arrays initialization
 for (let i = 0; i < columns * rows; i++) {
     flagContainer[i] = 0;
 }
-//posizione delle bombe
-while (bombsList.length < totalBombs) {
+while (bombsList.length < totalBombs) { // bombs position
     const x = Math.floor(Math.random() * totalCells) + 1;
     if (!bombsList.includes(x)) {
         bombsList.push(x);
     }
-    //console.log(x);
 };
 for (let i = 0; i < columns * rows; i++) {
     if (bombsList.includes(i + 1)) {
@@ -35,8 +36,7 @@ for (let i = 0; i < columns * rows; i++) {
     }
 }
 
-//console.log(bombsList);
-// griglia
+// grid
 
 for (let i = 1; i <= totalCells; i++) {
     let j = i - 1;
@@ -47,7 +47,7 @@ for (let i = 1; i <= totalCells; i++) {
 
     grid.appendChild(cell);
     allCells.push(cell);
-    //click destro
+    // right-click
 
     cell.addEventListener('contextmenu', (ev) => {
         ev.preventDefault();
@@ -69,31 +69,26 @@ for (let i = 1; i <= totalCells; i++) {
             }
         }
     });
-    //click della cella
-    cell.addEventListener('click', function () {
-        clickCells(cell, i, true);
-    });
-
-
-    //console.log(i);
+    // cell click
+    cell.addEventListener('click', clickCells(cell, i, true));
 }
 
 function count(cellPosition, container) {
     let counter = 0;
     let neighbour = cellPosition - columns - 1;
-    let corner;
+    let leftRightEdge = false;
     if (cellPosition % columns === 1) {
-        corner = 1;
+        leftRightEdge = "left";
     }
-    else if (cellPosition % columns === 0) {
-        corner = 2;
+    else if (!(cellPosition % columns)) {
+        leftRightEdge = "right";
     }
     else {
-        corner = 0;
+        leftRightEdge = false;
     }
 
     while (neighbour < cellPosition + columns + 2) {
-        if (corner === 1) {
+        if (leftRightEdge === "left") {
             if (neighbour === cellPosition - columns - 1) {
                 neighbour++;
             }
@@ -101,8 +96,8 @@ function count(cellPosition, container) {
         if (container[neighbour - 1] === 1) counter++;
         if (neighbour <= cellPosition - columns) {
 
-            if (corner === 2 & neighbour === cellPosition - columns) {
-                neighbour = neighbour + columns - 1;
+            if (leftRightEdge === "right" && neighbour === cellPosition - columns) {
+                neighbour += columns - 1;
             }
             else {
                 neighbour++;
@@ -110,32 +105,32 @@ function count(cellPosition, container) {
 
         }
         else if (neighbour === cellPosition - columns + 1) {
-            if (corner === 1) {
-                neighbour = neighbour + columns;
+            if (leftRightEdge === "left") {
+                neighbour += columns;
             }
             else {
-                neighbour = neighbour + columns - 2;
+                neighbour += columns - 2;
             }
         }
         else if (neighbour === cellPosition - 1) {
-            if (corner === 2) {
-                neighbour = neighbour + columns;
+            if (leftRightEdge === "right") {
+                neighbour += columns;
             }
             else {
-                neighbour = neighbour + 2;
+                neighbour += 2;
             }
 
         }
         else if (neighbour === cellPosition + 1) {
-            if (corner === 1) {
-                neighbour = neighbour + columns - 1;
+            if (leftRightEdge === "left") {
+                neighbour += columns - 1;
             }
             else {
-                neighbour = neighbour + columns - 2;
+                neighbour += columns - 2;
             }
         }
         else if (neighbour > cellPosition + columns - 2) {
-            if (corner === 2 & neighbour === cellPosition + columns) {
+            if (leftRightEdge === "right" && neighbour === cellPosition + columns) {
                 neighbour = cellPosition + columns + 2;
             }
             else {
@@ -162,7 +157,7 @@ function clickCells(cell, position, handClicked) {
         else {
             if (cell.classList.contains('cell-clicked')) {
                 if (count(position, bombContainer) !== 0) {
-                    if (count(position, bombContainer) === count(position, flagContainer) & handClicked === true) {
+                    if (count(position, bombContainer) === count(position, flagContainer) && handClicked) {
                         clickSurroundingCells(cell, position);
                         //console.log(count(position, flagContainer));
                     }
@@ -173,11 +168,9 @@ function clickCells(cell, position, handClicked) {
             else {
                 cell.classList.add('cell-clicked');
                 updateScore();
-                //numero
 
                 if (count(position, bombContainer) === 0) {
                     zerosCounter.push(position);
-                    //console.log(zerosCounter);
                     clickSurroundingCells(cell, position);
 
                 }
@@ -192,35 +185,35 @@ function clickCells(cell, position, handClicked) {
 
 function clickSurroundingCells(cell, position) {
     let neighbour = position - columns - 1;
-    let tb;
-    let corner;
+    let topBottomEdge=false;
+    let leftRightEdge=false;
     if (position % columns === 1) {
-        corner = 1;
+        leftRightEdge = "left";
     }
-    else if (position % columns === 0) {
-        corner = 2;
+    else if (!(position % columns)) {
+        leftRightEdge = "right";
     }
     else {
-        corner = 0;
+        leftRightEdge = false;
     }
     if (position <= columns) {
-        tb = 1;
+        topBottomEdge = "top";
     }
     else if (position > columns * (rows - 1)) {
-        tb = 2;
+        topBottomEdge = "bottom";
     }
-    else tb = 0;
+    else topBottomEdge = false;
     while (neighbour < position + columns + 2) {
-        if (tb === 1 & neighbour === position - columns - 1) {
-            if (corner === 1) {
-                neighbour = neighbour + columns + 2;
+        if (topBottomEdge === "top" && neighbour === position - columns - 1) {
+            if (leftRightEdge === "left") {
+                neighbour += columns + 2;
             }
             else {
-                neighbour = neighbour + columns;
+                neighbour += columns;
             }
 
         }
-        if (corner === 1 & tb !== 1) {
+        if (leftRightEdge === "left" && topBottomEdge !== "top") {
             if (neighbour === position - columns - 1) {
                 neighbour++;
             }
@@ -229,49 +222,49 @@ function clickSurroundingCells(cell, position) {
         clickCells(cellToClick, neighbour, false);
         if (neighbour <= position - columns) {
 
-            if (corner === 2 & neighbour === position - columns) {
-                neighbour = neighbour + columns - 1;
+            if (leftRightEdge === "right" && neighbour === position - columns) {
+                neighbour += columns - 1;
             }
             else {
                 neighbour++;
             }
         }
         else if (neighbour === position - columns + 1) {
-            if (corner === 1) {
-                neighbour = neighbour + columns;
+            if (leftRightEdge === "left") {
+                neighbour += columns;
             }
             else {
-                neighbour = neighbour + columns - 2;
+                neighbour += columns - 2;
             }
         }
         else if (neighbour === position - 1) {
-            if (corner === 2) {
-                if (tb === 2) {
+            if (leftRightEdge === "right") {
+                if (topBottomEdge === "bottom") {
                     neighbour = position + columns + 2;
                 }
                 else {
-                    neighbour = neighbour + columns;
+                    neighbour += columns;
                 }
             }
             else {
-                neighbour = neighbour + 2;
+                neighbour += 2;
             }
         }
         else if (neighbour === position + 1) {
-            if (tb === 2) {
+            if (topBottomEdge === "bottom") {
                 neighbour = position + columns + 2;
             }
             else {
-                if (corner === 1) {
-                    neighbour = neighbour + columns - 1;
+                if (leftRightEdge === "left") {
+                    neighbour += columns - 1;
                 }
                 else {
-                    neighbour = neighbour + columns - 2;
+                    neighbour += columns - 2;
                 }
             }
         }
         else if (neighbour > position + columns - 2) {
-            if (corner === 2 & neighbour === position + columns) {
+            if (leftRightEdge === "right" && neighbour === position + columns) {
                 neighbour = position + columns + 2;
             }
             else {
@@ -311,7 +304,7 @@ function showBombs(isVictory) {
     for (let i = 0; i < cells.length; i++) {
         if (bombsList.includes(i + 1)) {
             const cellToReveal = cells[i];
-            if (isVictory === false) cellToReveal.classList.add('cell-bomb');
+            if (!isVictory) cellToReveal.classList.add('cell-bomb');
             else cellToReveal.classList.add('cell-flag');
         }
     }
