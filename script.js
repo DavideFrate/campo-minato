@@ -37,7 +37,6 @@ for (let i = 0; i < columns * rows; i++) {
 }
 
 // grid
-
 for (let i = 1; i <= totalCells; i++) {
     let j = i - 1;
     const cell = document.createElement('div');
@@ -70,7 +69,7 @@ for (let i = 1; i <= totalCells; i++) {
         }
     });
     // cell click
-    cell.addEventListener('click', clickCells(cell, i, true));
+    cell.addEventListener('click', () => clickCells(cell, i, true));
 }
 
 function count(cellPosition, container) {
@@ -144,7 +143,6 @@ function count(cellPosition, container) {
     return counter;
 }
 function clickCells(cell, position, handClicked) {
-    //console.log(count(position, flagContainer));
     if (cell.classList.contains('cell-flag')) {
         return;
     }
@@ -159,7 +157,6 @@ function clickCells(cell, position, handClicked) {
                 if (count(position, bombContainer) !== 0) {
                     if (count(position, bombContainer) === count(position, flagContainer) && handClicked) {
                         clickSurroundingCells(cell, position);
-                        //console.log(count(position, flagContainer));
                     }
                 }
 
@@ -276,9 +273,6 @@ function clickSurroundingCells(cell, position) {
         }
     }
 }
-
-
-//console.log(zerosCounter)
 
 function updateScore() {
     score++;
