@@ -58,7 +58,7 @@ for (let i = 1; i <= totalCells; i++) {
     cell.addEventListener('click', () => clickCells(cell, i, true));
 
     // mobile long press
-    let canClick = true;
+    let canClick = true; // Prevents the click event from firing after a long press
     let pressTimer;
     const longPressDuration = 499; // Duration in milliseconds for a long press
     cell.addEventListener('touchstart', (ev) => {
