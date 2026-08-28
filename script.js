@@ -18,8 +18,7 @@ const bombContainer = [totalCells];
 let score = 0;
 let flagCounter = 0;
 let zerosCounter = [];
-scoreCounter.innerText = String(totalBombs).padStart(3, 0);
-
+scoreCounter.innerText = String(totalBombs).padStart(2, 0);
 // arrays initialization
 for (let i = 0; i < columns * rows; i++) {
     flagContainer[i] = 0;
@@ -41,6 +40,8 @@ for (let i = 1; i <= totalCells; i++) {
     let j = i - 1;
     const cell = document.createElement('div');
     cell.classList.add('cell');
+    cell.style.width = String(100 / columns) + '%';
+    cell.style.height = String(100 / rows) + '%';
 
     if ( j % 2 ^ Math.floor(j / columns) % 2 ) cell.classList.add('cell-dark');
 
