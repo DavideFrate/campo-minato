@@ -47,30 +47,68 @@ for (let i = 1; i <= totalCells; i++) {
 
     grid.appendChild(cell);
     allCells.push(cell);
-    // right-click
 
+    // right-click
     cell.addEventListener('contextmenu', (ev) => {
         ev.preventDefault();
-        if (cell.classList.contains('cell-flag')) {
-            cell.classList.remove('cell-flag');
-            flagContainer[j] = 0;
-            flagCounter--;
+        rightClick(cell, j);
+    });
+
+    // cell click
+    cell.addEventListener('click', () => clickCells(cell, i, true));
+
+    // mobile long press
+    let canClick = true;
+    let pressTimer;
+    const longPressDuration = 499; // Duration in milliseconds for a long press
+    cell.addEventListener('touchstart', (ev) => {
+        // Prevent multiple touches from triggering the long press
+        if (ev.touches.length > 1) return;
+
+        ev.preventDefault();
+        pressTimer = setTimeout(() => {
+            canClick = false;
+            rightClick(cell, j);
+        }, longPressDuration);
+    });
+    cell.addEventListener('touchend', () => {
+        if (pressTimer<longPressDuration && canClick) clickCells(cell, i, true);
+        clearTimeout(pressTimer);
+        canClick = true;
+    });
+    cell.addEventListener('touchmove', () => {
+        clearTimeout(pressTimer);
+        canClick = false;
+    }, { passive: true });
+    cell.addEventListener('touchcancel', () => {
+        clearTimeout(pressTimer);
+        canClick = false;
+    });
+    cell.addEventListener('selectstart', (event) => {
+        event.preventDefault();
+        return false;
+    });
+
+}
+
+function rightClick(cell, position) {
+    if (cell.classList.contains('cell-flag')) {
+        cell.classList.remove('cell-flag');
+        flagContainer[position] = 0;
+        flagCounter--;
+        scoreCounter.innerText = String(totalBombs - flagCounter).padStart(3, 0);
+    }
+    else {
+        if (!cell.classList.contains('cell-clicked')) {
+            cell.classList.add('cell-flag');
+            flagContainer[position] = 1;
+            flagCounter++;
             scoreCounter.innerText = String(totalBombs - flagCounter).padStart(3, 0);
         }
         else {
-            if (!cell.classList.contains('cell-clicked')) {
-                cell.classList.add('cell-flag');
-                flagContainer[j] = 1;
-                flagCounter++;
-                scoreCounter.innerText = String(totalBombs - flagCounter).padStart(3, 0);
-            }
-            else {
-                return;
-            }
+            return;
         }
-    });
-    // cell click
-    cell.addEventListener('click', () => clickCells(cell, i, true));
+    }
 }
 
 function count(cellPosition, container) {

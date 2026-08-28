@@ -13,6 +13,12 @@ COLOR PALETTE
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+
+	/* safari hack to prevent text selection on double click */
+	/* user-select: none !important;
+    -webkit-touch-callout: none !important;
+	-webkit-user-select: none !important;
+	touch-action: none !important; */
 }
 
 /* Regole generiche */
@@ -83,7 +89,6 @@ h1 {
 	display: flex;
   	justify-content: center;
   	align-items: center;
-	/*border: 1px dashed black;*/
 }
 
 .cell-dark {
